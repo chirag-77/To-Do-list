@@ -20,15 +20,18 @@ const item1=new Item({
   name:"Welcome to your to-do-list"
 });
 const item2=new Item({
-  name:"Use + buuton to add your daily tasks"
+  name:"Use + button to add your daily tasks"
 });
 const item3=new Item({
   name:"<--Check it to mark done and remove"
 });
 
 const defaultItems=[item1,item2,item3];
-
-
+const listSchema={
+  name: String,
+  items:[itemsSchema]
+};
+const List = mongoose.model("List",listSchema);
 app.get("/",function(req,res){
   Item.find({},function(err,foundItems){
     if(foundItems.length==0){
@@ -38,10 +41,28 @@ app.get("/",function(req,res){
       else console.log("Successfully inserted defaults in DB.");
     })
   }
-    else   res.render("list",{kindOfDay:"Today",newListItems:foundItems});
+    else   res.render("list",{listTitle:"Today",newListItems:foundItems});
     })
   })
 
+
+  app.get("/:customListName",function(req,res){
+  const customListName=req.params.customListName;
+
+  List.findOne({name:customListName},function(err,foundList){
+    if(!foundList){
+      const list = new List({
+        name: customListName,
+        items:defaultItems
+      });
+      list.save();
+      res.redirect("/"+customListName);
+    }
+    else {
+      res.render("list",{listTitle:foundList.name,newListItems:foundList.items})
+    }
+  })
+})
 //   var today= new Date();
 //   var options={weekday: 'long',year: 'numeric',month: 'long',day: 'numeric'};
 //
@@ -59,11 +80,26 @@ app.post("/delete",function(req,res){
 
 app.post("/",function(req,res){
 const itemName=req.body.newItem;
+const listName=req.body.listName;
+
+
 const item = new Item({
   name: itemName
 })
-item.save();
-  res.redirect("/");
+if(listName=="Today"){
+  item.save();
+    res.redirect("/");
+}
+else{
+    List.findOne({name:listName},function(err,foundList){
+      if(err)
+      console.log(err);
+    foundList.items.push(item);
+    foundList.save();
+    res.redirect("/"+listName);
+  })
+
+}
 })
 
 app.listen(3000,function(){
