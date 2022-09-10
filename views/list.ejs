@@ -15,10 +15,11 @@
   <div class="box">
     <%  newListItems.forEach(function(item){%>
       <form action="/delete" method="post">
-      <div class="item">
+      <div class="item" >
         <input type="checkbox" name="checkbox" value="<%=item._id%>" onChange="this.form.submit()" >
          <p class="item"><%=item.name%></p>
        </div>
+       <input type="hidden" name="listName" value="<%=listTitle%>" >
      </form>
   <%  }) %>
 

@@ -70,12 +70,28 @@ app.get("/",function(req,res){
 
 app.post("/delete",function(req,res){
   const checkedItemID=req.body.checkbox;
+  const listName=req.body.listName;
+  if(listName==="Today"){
   Item.findByIdAndRemove(checkedItemID,function(err){
-    if(!err)
+
+     if(!err){
     console.log("Successfullly deleted checked item");
-  })
-  res.redirect("/");
-})
+    res.redirect("/");
+  }
+  });
+}
+
+
+
+  else {
+    List.findOneAndUpdate({name:listName},{$pull: {items:{_id: checkedItemID}}},function(err,foundList){
+      if(!err)
+      res.redirect("/"+listName);
+    })
+}
+
+
+});
 
 
 app.post("/",function(req,res){
