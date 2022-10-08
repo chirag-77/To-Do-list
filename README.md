@@ -6,4 +6,4 @@ This is a demonstration of the working application:
 https://user-images.githubusercontent.com/86802843/189515572-1a51c18d-69c6-4845-88f9-5602318defee.mp4
 
 
-You can build and run this on your local system at http://localhost:3000/
+Find the hosted app at https://to-do-list-chirag-77.herokuapp.com/
